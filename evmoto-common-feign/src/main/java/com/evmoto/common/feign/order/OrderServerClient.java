@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -35,4 +36,12 @@ public interface OrderServerClient {
      */
     @PostMapping("/order/feign/collect/save")
     R<Boolean> saveOrderCollection(@RequestBody OrderCollectionDto dto);
+
+    /**
+     * 取消订单
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/order/feign/cancel/{orderId}")
+    R<Boolean> cancelOrder(@PathVariable("orderId") Long orderId);
 }
