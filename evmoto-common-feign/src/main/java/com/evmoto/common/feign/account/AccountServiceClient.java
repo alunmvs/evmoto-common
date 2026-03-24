@@ -16,7 +16,7 @@ import java.util.List;
  * @description:
  * @date 2026/3/22 12:15
  */
-@FeignClient(ServiceNameConstants.MB_CLOUD_ORDERSERVER)
+@FeignClient(ServiceNameConstants.MB_CLOUD_ACCOUNT)
 public interface AccountServiceClient {
 
     @PostMapping("/account/feign/todayIncome/get")
