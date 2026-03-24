@@ -35,28 +35,21 @@ public class OSRMUtil {
      * @param startLng Start point longitude
      * @param endLat End point latitude
      * @param endLng End point longitude
-     * @return Distance in kilometers, or null if failed
+     * @return Distance in kilometers, or null if route not found
      */
-    public static Double getDistance(Double startLat, Double startLng, Double endLat, Double endLng) {
-        try {
-            log.info("[OSRM] - Calculating distance - start:[{},{}], end:[{},{}]",
-                     startLat, startLng, endLat, endLng);
+    public static Double getDistance(Double startLat, Double startLng, Double endLat, Double endLng) throws Exception {
+        log.info("[OSRM] - Calculating distance - start:[{},{}], end:[{},{}]",
+                 startLat, startLng, endLat, endLng);
 
-            OSRMRouteResult routeResult = getRoute(startLat, startLng, endLat, endLng);
+        OSRMRouteResult routeResult = getRoute(startLat, startLng, endLat, endLng);
 
-            if (routeResult != null && routeResult.getDistance() != null) {
-                Double distanceKm = routeResult.getDistance() / 1000.0; // Convert meters to kilometers
-                log.info("[OSRM] - Distance calculated: {} km", distanceKm);
-                return distanceKm;
-            }
-
-            log.error("[OSRM] - Failed to calculate distance - null result");
-            return null;
-
-        } catch (Exception e) {
-            log.error("[OSRM] - Error calculating distance: {}", e.getMessage(), e);
-            return null;
+        if (routeResult != null && routeResult.getDistance() != null) {
+            Double distanceKm = routeResult.getDistance() / 1000.0;
+            log.info("[OSRM] - Distance calculated: {} km", distanceKm);
+            return distanceKm;
         }
+
+        return null;
     }
 
     /**
@@ -66,15 +59,13 @@ public class OSRMUtil {
      * @param startLng Start point longitude
      * @param endLat End point latitude
      * @param endLng End point longitude
-     * @return OSRMRouteResult object containing distance, duration, and geometry; or null if failed
+     * @return OSRMRouteResult object containing distance, duration, and geometry; or null if not found
      */
-    public static OSRMRouteResult getRoute(Double startLat, Double startLng, Double endLat, Double endLng) {
+    public static OSRMRouteResult getRoute(Double startLat, Double startLng, Double endLat, Double endLng) throws Exception {
         HttpURLConnection conn = null;
         BufferedReader reader = null;
 
         try {
-            // OSRM Route API endpoint
-            // Format: /route/v1/{profile}/{coordinates}?overview={full|simplified|false}&geometries={polyline|polyline6|geojson}
             String urlString = String.format(
                 "%s/route/v1/driving/%s,%s;%s,%s?overview=full&geometries=geojson",
                 OSRM_SERVER_URL,
@@ -87,7 +78,7 @@ public class OSRMUtil {
             URL url = new URL(urlString);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(10000); // 10 seconds
+            conn.setConnectTimeout(10000);
             conn.setReadTimeout(10000);
 
             int responseCode = conn.getResponseCode();
@@ -103,7 +94,6 @@ public class OSRMUtil {
 
                 log.debug("[OSRM] - Response: {}", response.toString());
 
-                // Parse OSRM response
                 JSONObject jsonResponse = JSON.parseObject(response.toString());
                 String code = jsonResponse.getString("code");
 
@@ -114,10 +104,9 @@ public class OSRMUtil {
                         JSONObject route = routes.getJSONObject(0);
 
                         OSRMRouteResult result = new OSRMRouteResult();
-                        result.setDistance(route.getDouble("distance"));  // meters
-                        result.setDuration(route.getDouble("duration"));  // seconds
+                        result.setDistance(route.getDouble("distance"));
+                        result.setDuration(route.getDouble("duration"));
 
-                        // Get geometry (route coordinates)
                         JSONObject geometry = route.getJSONObject("geometry");
                         if (geometry != null) {
                             result.setGeometry(geometry.toJSONString());
@@ -137,10 +126,6 @@ public class OSRMUtil {
                 log.error("[OSRM] - HTTP error code: {}", responseCode);
                 return null;
             }
-
-        } catch (Exception e) {
-            log.error("[OSRM] - Error getting route: {}", e.getMessage(), e);
-            return null;
 
         } finally {
             try {
@@ -162,7 +147,7 @@ public class OSRMUtil {
      * @return Distance in kilometers
      */
     public static Double getHaversineDistance(Double lat1, Double lng1, Double lat2, Double lng2) {
-        final int EARTH_RADIUS_KM = 6371; // Earth's radius in kilometers
+        final int EARTH_RADIUS_KM = 6371;
 
         double dLat = Math.toRadians(lat2 - lat1);
         double dLng = Math.toRadians(lng2 - lng1);
@@ -172,7 +157,6 @@ public class OSRMUtil {
                    Math.sin(dLng / 2) * Math.sin(dLng / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
         double distance = EARTH_RADIUS_KM * c;
 
         log.debug("[OSRM] - Haversine distance: {} km", distance);
@@ -185,7 +169,7 @@ public class OSRMUtil {
      *
      * @return true if server is accessible
      */
-    public static boolean checkServerHealth() {
+    public static boolean checkServerHealth() throws Exception {
         HttpURLConnection conn = null;
 
         try {
@@ -196,15 +180,10 @@ public class OSRMUtil {
             conn.setReadTimeout(5000);
 
             int responseCode = conn.getResponseCode();
-
-            boolean isHealthy = (responseCode == 200 || responseCode == 400); // 400 means server is up but invalid coords
+            boolean isHealthy = (responseCode == 200 || responseCode == 400);
             log.info("[OSRM] - Server health check: {}", isHealthy ? "HEALTHY" : "DOWN");
 
             return isHealthy;
-
-        } catch (Exception e) {
-            log.error("[OSRM] - Server health check FAILED: {}", e.getMessage());
-            return false;
 
         } finally {
             if (conn != null) conn.disconnect();

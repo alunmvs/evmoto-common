@@ -10,6 +10,8 @@ import com.google.maps.model.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Google Maps Utility
@@ -204,6 +206,51 @@ public class GoogleMapUtil {
             vo.setDistance(element.distance.inMeters);
             vo.setDuration(element.duration.inSeconds);
             return vo;
+        } finally {
+            context.shutdown();
+        }
+    }
+
+    /**
+     * Search places: fuzzy place search returning multiple results.
+     * Replaces PhotonUtil.searchPlaces().
+     *
+     * @param query Search query (e.g. "Indomaret Sudirman Jakarta")
+     * @param limit Max number of results (1-20)
+     * @param lat   Optional: location bias latitude
+     * @param lng   Optional: location bias longitude
+     * @return List of FindPlaceFromTextVo, empty list if not found
+     */
+    public List<FindPlaceFromTextVo> searchPlaces(String query, int limit, Double lat, Double lng) throws Exception {
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey(key)
+                .build();
+        try {
+            TextSearchRequest request = new TextSearchRequest(context)
+                    .query(query)
+                    .language("en");
+
+            if (lat != null && lng != null) {
+                request = request.location(new LatLng(lat, lng));
+            }
+
+            PlacesSearchResult[] results = request.await().results;
+            List<FindPlaceFromTextVo> list = new ArrayList<>();
+            int count = Math.min(limit > 0 ? limit : 5, results.length);
+
+            for (int i = 0; i < count; i++) {
+                PlacesSearchResult r = results[i];
+                FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
+                vo.setName(r.name);
+                vo.setAddress(r.formattedAddress);
+                if (r.geometry != null) {
+                    vo.setLat(r.geometry.location.lat);
+                    vo.setLng(r.geometry.location.lng);
+                }
+                list.add(vo);
+            }
+
+            return list;
         } finally {
             context.shutdown();
         }
