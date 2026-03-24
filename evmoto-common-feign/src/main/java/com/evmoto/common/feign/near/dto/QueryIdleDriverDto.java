@@ -40,7 +40,7 @@ public class QueryIdleDriverDto implements Serializable {
     private Integer serverCarModelId;
 
     /**
-     * 司机上下班的状态
+     * 司机上下班的状态 1是上班 2是下班
      */
     private Integer workState;
 

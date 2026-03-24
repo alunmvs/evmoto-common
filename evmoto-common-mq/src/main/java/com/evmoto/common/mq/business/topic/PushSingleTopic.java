@@ -7,15 +7,15 @@ package com.evmoto.common.mq.business.topic;
  * @description:
  * @date 2026/3/20 12:39
  */
-public interface BusinessProcessTopic {
+public interface PushSingleTopic {
 
     /**
      * 主题
      */
-    String BUSINESS_PROCESS_TOPIC = "businessProcess";
+    String PUSH_SINGLE_TOPIC = "pushSingle";
 
     /**
-     * 订单创建的tag
+     * 推送
      */
-    String BUSINESS_PROCESS_ORDER_CREATE_TAG = "orderCreate";
+    String PUSH_SINGLE_PUSH_ORDER_TAG = "pushTag";
 }
