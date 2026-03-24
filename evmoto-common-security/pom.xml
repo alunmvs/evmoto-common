@@ -18,6 +18,11 @@
             <version>2026.03.10-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>evmoto.common</groupId>
+            <artifactId>evmoto-common-redis</artifactId>
+            <version>2026.03.10</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>

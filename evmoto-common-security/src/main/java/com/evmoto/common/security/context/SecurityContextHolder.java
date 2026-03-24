@@ -42,6 +42,24 @@ public class SecurityContextHolder {
         return map;
     }
 
+    public static void setUserId(Integer userId) {
+        set(SecurityConstants.USER, userId);
+    }
+
+    public static Integer getUserId() {
+        return get(SecurityConstants.USER, Integer.class);
+    }
+
+
+    public static void setDriverId(Integer driverId) {
+        set(SecurityConstants.DRIVER_ID, driverId);
+    }
+
+    public static Integer getDriverId() {
+        return get(SecurityConstants.DRIVER_ID, Integer.class);
+    }
+
+
     public static void setRole(String role) {
         set(SecurityConstants.ROLE, role);
     }

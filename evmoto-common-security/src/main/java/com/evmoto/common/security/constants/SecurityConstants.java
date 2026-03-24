@@ -24,5 +24,21 @@ public interface SecurityConstants {
      */
     String AUTHORIZATION = "Authorization";
 
+    /**
+     * 鉴权
+     */
+    String CLIENT_ID = "clientId";
+
+
+    /**
+     * 乘客
+     */
+    String USER = "userId";
+
+    /**
+     * 司机
+     */
+    String DRIVER_ID = "driverId";
+
 
 }
