@@ -3,6 +3,7 @@ package com.evmoto.common.feign.order;
 import com.evmoto.common.core.domain.R;
 import com.evmoto.common.feign.constant.ServiceNameConstants;
 import com.evmoto.common.feign.order.dto.OrderCollectionDto;
+import com.evmoto.common.feign.order.dto.OrderHallChangeDto;
 import com.evmoto.common.feign.order.vo.OrderPrivateCarVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,4 +45,12 @@ public interface OrderServerClient {
      */
     @PutMapping("/order/feign/cancel/{orderId}")
     R<Boolean> cancelOrder(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 修改订单的orderHall字段
+     * @param dto
+     * @return
+     */
+    @PostMapping("/order/feign/hall/change")
+    R<Boolean> orderHallChange(@RequestBody OrderHallChangeDto dto);
 }
