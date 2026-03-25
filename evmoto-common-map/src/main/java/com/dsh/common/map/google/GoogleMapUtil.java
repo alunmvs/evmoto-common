@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class GoogleMapUtil {
 
-    private final String key = "AIzaSyBNgMRPVj8zt4OEGrUoyHifEDE9SCHYSLE";
+    private final String key = "AIzaSyD6C7vVm_PbnBkauYioOYTmQca7EoCQP20";
 
     /**
      * Forward geocoding: address -> coordinates
