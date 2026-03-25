@@ -33,8 +33,7 @@ public interface AppServerClient {
      * 获取车型信息
      * @return
      */
-    @GetMapping("/app/feign/carModel/get/{orderType}/{carId}")
-    R<Integer> getServerCarModelId(@PathVariable("carId") Integer orderType,
-                                   @PathVariable("carId") Integer carId);
+    @GetMapping("/app/feign/carModel/get/{carId}")
+    R<Integer> getServerCarModelId(@PathVariable("carId") Integer carId);
 
 }
