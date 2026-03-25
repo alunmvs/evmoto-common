@@ -29,4 +29,12 @@ public interface AppServerClient {
     @GetMapping("/app/feign/minMoney/get")
     R<BigDecimal> getMinMoney();
 
+    /**
+     * 获取车型信息
+     * @return
+     */
+    @GetMapping("/app/feign/carModel/get/{orderType}/{carId}")
+    R<Integer> getServerCarModelId(@PathVariable("carId") Integer orderType,
+                                   @PathVariable("carId") Integer carId);
+
 }

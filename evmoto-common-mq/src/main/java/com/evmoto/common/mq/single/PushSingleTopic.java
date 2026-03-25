@@ -1,4 +1,4 @@
-package com.evmoto.common.mq.business.topic;
+package com.evmoto.common.mq.single;
 
 /**
  * @author yelingjun
