@@ -78,8 +78,25 @@ public class GoogleMapUtil {
                 ReverseGeocodeVo vo = new ReverseGeocodeVo();
                 vo.setAddress(results[0].formattedAddress);
                 vo.setAddressComponentsVos(componentVos);
-                if (components.length > 0) {
-                    vo.setName(components[0].longName);
+                String fallbackStreet = null;
+                for (AddressComponent component : components) {
+                    for (AddressComponentType type : component.types) {
+                        if (type == AddressComponentType.PREMISE
+                                || type == AddressComponentType.ESTABLISHMENT
+                                || type == AddressComponentType.NATURAL_FEATURE
+                                || type == AddressComponentType.PARK
+                                || type == AddressComponentType.AIRPORT) {
+                            vo.setName(component.longName);
+                            break;
+                        }
+                        if (type == AddressComponentType.ROUTE && fallbackStreet == null) {
+                            fallbackStreet = component.longName;
+                        }
+                    }
+                    if (vo.getName() != null) break;
+                }
+                if (vo.getName() == null) {
+                    vo.setName(fallbackStreet);
                 }
                 return vo;
             }
