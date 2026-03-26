@@ -78,6 +78,9 @@ public class GoogleMapUtil {
                 ReverseGeocodeVo vo = new ReverseGeocodeVo();
                 vo.setAddress(results[0].formattedAddress);
                 vo.setAddressComponentsVos(componentVos);
+                if (components.length > 0) {
+                    vo.setName(components[0].longName);
+                }
                 return vo;
             }
             return null;

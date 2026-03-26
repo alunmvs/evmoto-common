@@ -1,8 +1,17 @@
 package com.dsh.common.map.vo;
 
 public class ReverseGeocodeVo {
+    private String name;
     private String address;
     private AddressComponentsVo[] addressComponentsVos;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getAddress() {
         return address;
