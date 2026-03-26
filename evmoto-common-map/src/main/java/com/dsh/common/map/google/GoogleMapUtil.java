@@ -78,26 +78,71 @@ public class GoogleMapUtil {
                 ReverseGeocodeVo vo = new ReverseGeocodeVo();
                 vo.setAddress(results[0].formattedAddress);
                 vo.setAddressComponentsVos(componentVos);
-                String fallbackStreet = null;
+
+                String tier1 = null; // point_of_interest, establishment, premise, tourist_attraction
+                String tier2 = null; // airport, station, park, natural_feature, shopping_mall, museum, campground
+                String tier3 = null; // route
+                String tier4 = null; // neighborhood, sublocality
+                String tier5 = null; // locality
+                String tier6 = null; // administrative_area_level_2, level_1
+
                 for (AddressComponent component : components) {
                     for (AddressComponentType type : component.types) {
-                        if (type == AddressComponentType.PREMISE
+                        if (tier1 == null && (
+                                type == AddressComponentType.POINT_OF_INTEREST
                                 || type == AddressComponentType.ESTABLISHMENT
-                                || type == AddressComponentType.NATURAL_FEATURE
-                                || type == AddressComponentType.PARK
-                                || type == AddressComponentType.AIRPORT) {
-                            vo.setName(component.longName);
-                            break;
+                                || type == AddressComponentType.PREMISE
+                                || type == AddressComponentType.TOURIST_ATTRACTION)) {
+                            tier1 = component.longName;
                         }
-                        if (type == AddressComponentType.ROUTE && fallbackStreet == null) {
-                            fallbackStreet = component.longName;
+                        if (tier2 == null && (
+                                type == AddressComponentType.AIRPORT
+                                || type == AddressComponentType.TRAIN_STATION
+                                || type == AddressComponentType.BUS_STATION
+                                || type == AddressComponentType.SUBWAY_STATION
+                                || type == AddressComponentType.TRANSIT_STATION
+                                || type == AddressComponentType.LIGHT_RAIL_STATION
+                                || type == AddressComponentType.PARK
+                                || type == AddressComponentType.NATURAL_FEATURE
+                                || type == AddressComponentType.SHOPPING_MALL
+                                || type == AddressComponentType.MUSEUM
+                                || type == AddressComponentType.CAMPGROUND)) {
+                            tier2 = component.longName;
+                        }
+                        if (tier3 == null && type == AddressComponentType.ROUTE) {
+                            tier3 = component.longName;
+                        }
+                        if (tier4 == null && (
+                                type == AddressComponentType.NEIGHBORHOOD
+                                || type == AddressComponentType.SUBLOCALITY_LEVEL_1
+                                || type == AddressComponentType.SUBLOCALITY)) {
+                            tier4 = component.longName;
+                        }
+                        if (tier5 == null && type == AddressComponentType.LOCALITY) {
+                            tier5 = component.longName;
+                        }
+                        if (tier6 == null && (
+                                type == AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_2
+                                || type == AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_1)) {
+                            tier6 = component.longName;
                         }
                     }
-                    if (vo.getName() != null) break;
                 }
-                if (vo.getName() == null) {
-                    vo.setName(fallbackStreet);
+
+                String name = tier1 != null ? tier1
+                        : tier2 != null ? tier2
+                        : tier3 != null ? tier3
+                        : tier4 != null ? tier4
+                        : tier5 != null ? tier5
+                        : tier6;
+
+                if (name == null && results[0].plusCode != null) {
+                    name = results[0].plusCode.compoundCode != null
+                            ? results[0].plusCode.compoundCode
+                            : results[0].plusCode.globalCode;
                 }
+
+                vo.setName(name);
                 return vo;
             }
             return null;
