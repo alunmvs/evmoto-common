@@ -18,4 +18,9 @@ public interface ServiceNameConstants {
     String MB_CLOUD_APP = "mb-cloud-app";
 
     String MB_CLOUD_ACCOUNT = "mb-cloud-account";
+
+    String MB_CLOUD_DRIVER = "mb-cloud-driver";
+
+    String MB_CLOUD_PUSHMESSAGE = "mb-cloud-pushMessage";
+
 }

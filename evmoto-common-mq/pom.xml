@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>evmoto-common-mq</artifactId>
-    <version>2026.03.24-SNAPSHOT</version>
+    <version>2026.03.25-SNAPSHOT</version>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>

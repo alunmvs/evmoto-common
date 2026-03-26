@@ -91,7 +91,7 @@ public class EvmotoRedisClient {
     }
 
     private boolean exist(CacheInterface keyEnum, boolean needNameSpace, String... params) {
-        String key = keyEnum.formatKeyWithParam(true, params);
+        String key = keyEnum.formatKeyWithParam(needNameSpace, params);
         return redissonClient.getBucket(key).isExists();
     }
 

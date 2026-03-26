@@ -5,6 +5,7 @@ import com.evmoto.common.feign.constant.ServiceNameConstants;
 import com.evmoto.common.feign.order.dto.OrderCollectionDto;
 import com.evmoto.common.feign.order.dto.OrderHallChangeDto;
 import com.evmoto.common.feign.order.vo.OrderPrivateCarVo;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,4 +54,21 @@ public interface OrderServerClient {
      */
     @PostMapping("/order/feign/hall/change")
     R<Boolean> orderHallChange(@RequestBody OrderHallChangeDto dto);
+
+    /**
+     * 抢单操作
+     * @param driverId
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/order/feign/grab/{driverId}/{orderId}/")
+    R<Boolean> grabOrder(@PathVariable("driverId") Integer driverId, @PathVariable("orderId") Long orderId);
+
+    /**
+     * 还原订单到待接单状态
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/order/feign/waitAccept")
+    R<Boolean> orderStateToWaitAccept(@PathVariable("orderId") Long orderId);
 }
