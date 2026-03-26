@@ -23,7 +23,7 @@ public class OrderPaySuccessMqDto implements Serializable {
     /**
      * 订单id
      */
-    private Integer orderId;
+    private Long orderId;
     /**
      * 司机id
      */
