@@ -1,6 +1,7 @@
 package com.evmoto.common.security.context;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import com.evmoto.common.core.exception.EvmotoException;
 import com.evmoto.common.security.constants.SecurityConstants;
 import com.evmoto.common.security.utils.ConvertUtls;
 import org.apache.commons.lang.StringUtils;
@@ -46,8 +47,16 @@ public class SecurityContextHolder {
         set(SecurityConstants.USER, userId);
     }
 
-    public static Integer getUserId() {
+    public static Integer getSafeUserId() {
         return get(SecurityConstants.USER, Integer.class);
+    }
+
+    public static Integer getUserId() {
+        Integer userId = getSafeUserId();
+        if (userId == null) {
+            throw new EvmotoException("user id is null");
+        }
+        return userId;
     }
 
 
@@ -55,8 +64,16 @@ public class SecurityContextHolder {
         set(SecurityConstants.DRIVER_ID, driverId);
     }
 
-    public static Integer getDriverId() {
+    public static Integer getSafeDriverId() {
         return get(SecurityConstants.DRIVER_ID, Integer.class);
+    }
+
+    public static Integer getDriverId() {
+        Integer driverId = getSafeDriverId();
+        if (driverId == null) {
+            throw new EvmotoException("user id is null");
+        }
+        return driverId;
     }
 
 

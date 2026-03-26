@@ -1,10 +1,11 @@
 package com.evmoto.common.security.config;
 
 import com.evmoto.common.security.interceptor.HeaderInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -14,23 +15,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @description:
  * @date 2026/3/23 20:54
  */
+@Slf4j
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    // 1. 先注入拦截器（必须）
-    //@Autowired
-    //private HeaderInterceptor headerInterceptor;
-
     public WebMvcConfig() {
-        System.out.println("初始化拦截器了");
+        log.info("------------> WebMvcConfig init");
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(headerInterceptor()).addPathPatterns("/**")
-                //.excludePathPatterns(excludeUrls).order(-10);
-        ;
+        registry.addInterceptor(headerInterceptor()).addPathPatterns("/**");
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");
+    }
+
     /**
      * 自定义请求头拦截器
      */

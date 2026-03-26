@@ -15,6 +15,11 @@ public interface AccountTopic {
     String ACCOUNT_TOPIC = "account";
 
     /**
+     * 余额变动
+     */
+    String ACCOUNT_BALANCE_CHANGE = "balanceChange";
+
+    /**
      * 订单支付成功
      */
     String ACCOUNT_ORDER_PAY_SUCCESS = "orderPaySuccess";
