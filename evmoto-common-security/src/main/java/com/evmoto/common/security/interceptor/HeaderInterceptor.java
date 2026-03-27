@@ -41,10 +41,12 @@ public class HeaderInterceptor implements HandlerInterceptor {
             SecurityContextHolder.setDeviceId(ServletUtils.getHeader(request, SecurityConstants.DEVICE_ID));
             SecurityContextHolder.setAuthorization(request.getHeader(SecurityConstants.AUTHORIZATION));
             String clientId = request.getHeader("clientId");//ServletUtils.getHeader(request, SecurityConstants.CLIENT_ID);
-            if ("driver".equals(SecurityContextHolder.getRole())) {
-                SecurityContextHolder.setDriverId(Integer.valueOf(clientId));
-            } else if ("user".equals(SecurityContextHolder.getRole())) {
-                SecurityContextHolder.setUserId(Integer.valueOf(clientId));
+            if (StringUtils.isNotBlank(clientId)) {
+                if ("driver".equals(SecurityContextHolder.getRole())) {
+                    SecurityContextHolder.setDriverId(Integer.valueOf(clientId));
+                } else if ("user".equals(SecurityContextHolder.getRole())) {
+                    SecurityContextHolder.setUserId(Integer.valueOf(clientId));
+                }
             }
         } catch (Exception e) {
             log.error("获取拦截器信息发生异常", e);
