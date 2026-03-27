@@ -2,6 +2,7 @@ package com.evmoto.common.feign.order.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @date 2026/3/24 10:39
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class OrderHallChangeDto implements Serializable {
 
