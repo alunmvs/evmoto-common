@@ -69,6 +69,6 @@ public interface OrderServerClient {
      * @param orderId
      * @return
      */
-    @PutMapping("/order/feign/waitAccept")
+    @PutMapping("/order/feign/waitAccept/{orderId}")
     R<Boolean> orderStateToWaitAccept(@PathVariable("orderId") Long orderId);
 }
