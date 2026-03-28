@@ -3,7 +3,6 @@ package com.evmoto.common.feign.order;
 import com.evmoto.common.core.domain.R;
 import com.evmoto.common.feign.constant.ServiceNameConstants;
 import com.evmoto.common.feign.order.dto.DriverGeoQueryDto;
-import com.evmoto.common.feign.order.dto.OrderCollectionDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
