@@ -6,6 +6,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
 import org.redisson.codec.TypedJsonJacksonCodec;
 
+import java.time.Duration;
 import java.util.function.Supplier;
 
 /**
@@ -55,25 +56,67 @@ public class EvmotoRedisClient {
         return this.get(keyEnum, false, valueClass, null, params);
     }
 
-    private <V> void set(CacheInterface keyEnum, boolean needNameSpace, V obj, Class<V> valueClass, String... params) {
+    private <V> void set(CacheInterface keyEnum, boolean needNameSpace, V obj, Class<V> valueClass, Duration expire, String... params) {
         String key = keyEnum.formatKeyWithParam(needNameSpace, params);
         Codec codec = new TypedJsonJacksonCodec(valueClass);
         RBucket<V> bucket = redissonClient.getBucket(key, codec);
-        bucket.set(obj, keyEnum.getExpire());
+        bucket.set(obj, expire == null ? keyEnum.getExpire() : expire);
     }
 
+    /**
+     * 设置值
+     * @param keyEnum
+     * @param obj
+     * @param valueClass
+     * @param params
+     * @param <V>
+     */
     public  <V> void set(CacheInterface keyEnum, V obj, Class<V> valueClass, String... params) {
-        String key = keyEnum.formatKeyWithParam(true, params);
+        /*String key = keyEnum.formatKeyWithParam(true, params);
         Codec codec = new TypedJsonJacksonCodec(valueClass);
         RBucket<V> bucket = redissonClient.getBucket(key, codec);
-        bucket.set(obj, keyEnum.getExpire());
+        bucket.set(obj, keyEnum.getExpire());*/
+        set(keyEnum, true, obj, valueClass, null, params);
     }
 
+    /**
+     * 设置值，不需要带nameSpace
+     * @param keyEnum
+     * @param obj
+     * @param valueClass
+     * @param params
+     * @param <V>
+     */
     public <V> void setNoNameSpace(CacheInterface keyEnum, V obj, Class<V> valueClass, String... params) {
-        String key = keyEnum.formatKeyWithParam(false, params);
+        /*String key = keyEnum.formatKeyWithParam(false, params);
         Codec codec = new TypedJsonJacksonCodec(valueClass);
         RBucket<V> bucket = redissonClient.getBucket(key, codec);
-        bucket.set(obj, keyEnum.getExpire());
+        bucket.set(obj, keyEnum.getExpire());*/
+        set(keyEnum, false, obj, valueClass, null, params);
+    }
+
+    /**
+     * 设置值，自定义过期时间
+     * @param keyEnum
+     * @param obj
+     * @param valueClass
+     * @param params
+     * @param <V>
+     */
+    public  <V> void set(CacheInterface keyEnum, V obj, Class<V> valueClass, Duration expire, String... params) {
+        set(keyEnum, true, obj, valueClass, expire, params);
+    }
+
+    /**
+     * 设置值，不需要带nameSpace 自定义过期时间
+     * @param keyEnum
+     * @param obj
+     * @param valueClass
+     * @param params
+     * @param <V>
+     */
+    public <V> void setNoNameSpace(CacheInterface keyEnum, V obj, Class<V> valueClass, Duration expire, String... params) {
+        set(keyEnum, false, obj, valueClass, expire, params);
     }
 
     public void delete(CacheInterface keyEnum, String... params) {
