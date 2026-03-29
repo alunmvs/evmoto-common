@@ -6,6 +6,7 @@ import com.evmoto.common.security.utils.ServletUtils;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @description:
  * @date 2026/3/21 20:02
  */
+@Order(Integer.MIN_VALUE)
 public class FeignRequestInterceptor implements RequestInterceptor {
 
     @Override

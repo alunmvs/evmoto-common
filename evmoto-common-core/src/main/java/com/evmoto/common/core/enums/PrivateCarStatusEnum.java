@@ -17,9 +17,9 @@ public enum PrivateCarStatusEnum {
 
     PENDING_DEPARTURE(2, "待出发"),
 
-    PENDING_ARRIVE_AT_RESERVATION_LOCATION(3, "待到达预约地点"),
+    WAIT_ARRIVE(3, "待到达预约地点"),
 
-    WAITING_FOR_PASSENGER_BOARDING(4, "待乘客上车"),
+    WAIT_BOARD(4, "待乘客上车"),
 
     IN_SERVICE(5, "服务中"),
 
@@ -31,7 +31,7 @@ public enum PrivateCarStatusEnum {
 
     COMPLETED(9, "已完成"),
 
-    CANCELLED(10, "已取消"),
+    CANCELED(10, "已取消"),
 
     REASSIGNING(11, "改派中"),
 
@@ -40,7 +40,7 @@ public enum PrivateCarStatusEnum {
     ;
     @Getter
     private final int state;
-
+    @Getter
     private final String remark;
 
 

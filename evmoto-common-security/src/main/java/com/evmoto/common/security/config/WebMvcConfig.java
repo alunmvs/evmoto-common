@@ -1,6 +1,8 @@
 package com.evmoto.common.security.config;
 
+import com.evmoto.common.security.interceptor.FeignRequestInterceptor;
 import com.evmoto.common.security.interceptor.HeaderInterceptor;
+import feign.RequestInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,5 +42,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public HeaderInterceptor headerInterceptor() {
         return new HeaderInterceptor();
+    }
+
+    @Bean
+    public RequestInterceptor feignRequestInterceptor() {
+        return new FeignRequestInterceptor();
     }
 }

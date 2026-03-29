@@ -20,6 +20,8 @@ public enum ShareRedisKeyEnum implements CacheInterface {
     SOCKET_USER("share:socket:user:{0}", Duration.ofMinutes(30), "乘客的socket标志"),
 
     PUSH_ORDER_DRIVER_CONFIRM("share:push:orderConfirm:{0}:{1}", Duration.ofMinutes(10), "推送订单，司机确认标志"),
+
+    DRIVER_POSITION("share:position:{0}", Duration.ofSeconds(15), "司机实时位置"),
     ;
 
     private String key;

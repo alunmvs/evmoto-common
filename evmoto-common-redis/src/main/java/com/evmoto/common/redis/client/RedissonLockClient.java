@@ -6,6 +6,8 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 public class RedissonLockClient {
 
@@ -38,7 +40,7 @@ public class RedissonLockClient {
         }
     }
 
-    private RLock getLock(LockInterface lockEnum, String... params) {
+    public RLock getLock(LockInterface lockEnum, String... params) {
         String key = lockEnum.formatKeyWithParam(params);
         return redissonClient.getLock(key);
     }
