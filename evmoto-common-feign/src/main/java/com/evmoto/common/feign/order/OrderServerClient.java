@@ -61,7 +61,7 @@ public interface OrderServerClient {
      * @param orderId
      * @return
      */
-    @PutMapping("/order/feign/grab/{driverId}/{orderId}/")
+    @PutMapping("/order/feign/grab/{driverId}/{orderId}")
     R<Boolean> grabOrder(@PathVariable("driverId") Integer driverId, @PathVariable("orderId") Long orderId);
 
     /**

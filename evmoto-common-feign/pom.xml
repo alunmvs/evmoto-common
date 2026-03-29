@@ -8,7 +8,7 @@
         <version>2026.03.10-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>2026.03.25-SNAPSHOT</version>
+    <version>2026.03.29-SNAPSHOT</version>
     <artifactId>evmoto-common-feign</artifactId>
     <dependencies>
         <dependency>
