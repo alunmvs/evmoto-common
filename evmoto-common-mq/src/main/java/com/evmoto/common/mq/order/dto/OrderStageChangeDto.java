@@ -18,7 +18,18 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class OrderStageChangeDto implements Serializable {
 
+    /**
+     * 订单id
+     */
     private Long orderId;
 
+    /**
+     * 旧的订单状态
+     */
+    private int oldState;
 
+    /**
+     * 当前订单状态
+     */
+    private int currentState;
 }

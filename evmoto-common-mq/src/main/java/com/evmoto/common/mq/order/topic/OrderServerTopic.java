@@ -7,7 +7,7 @@ package com.evmoto.common.mq.order.topic;
  * @description:
  * @date: 2026/3/29 10:44
  */
-public interface OrderTopic {
+public interface OrderServerTopic {
 
     /**
      * 主题

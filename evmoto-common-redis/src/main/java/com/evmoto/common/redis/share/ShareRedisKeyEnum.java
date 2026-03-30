@@ -21,7 +21,11 @@ public enum ShareRedisKeyEnum implements CacheInterface {
 
     PUSH_ORDER_DRIVER_CONFIRM("share:push:orderConfirm:{0}:{1}", Duration.ofMinutes(10), "推送订单，司机确认标志"),
 
-    DRIVER_POSITION("share:position:{0}", Duration.ofSeconds(15), "司机实时位置"),
+    DRIVER_POSITION("share:position:{0}", Duration.ofSeconds(30), "司机实时位置"),
+
+    DRIVER_STATE("share:position:{0}", Duration.ofHours(8), "司机的服务状态"),
+
+    DRIVER_PAY_CONFIRM("share:position:{0}", Duration.ofDays(1), "司机有支付为确认的状态标志"),
     ;
 
     private String key;
