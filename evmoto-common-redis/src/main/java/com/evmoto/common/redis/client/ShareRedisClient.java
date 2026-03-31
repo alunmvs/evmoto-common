@@ -75,14 +75,18 @@ public class ShareRedisClient {
     /**
      * 获取司机当前正在服务的订单id
      * @param driverId
-     * @param orderId
      * @return
      */
-    public Long getDriverWorkOrderId(Integer driverId, Long orderId) {
+    public Long getDriverWorkOrderId(Integer driverId) {
         DriverWorkBo driverWork = getDriverWork(driverId);
         return driverWork.getOrderId();
     }
 
+    public void clearDriverWorkOrderId(Integer driverId) {
+        DriverWorkBo driverWork = getDriverWork(driverId);
+        driverWork.setOrderId(null);
+        addToRedis(driverId, driverWork);
+    }
 
     private DriverWorkBo getDriverWork(Integer driverId) {
         DriverWorkBo driverWork = evmotoRedisClient.getNoNameSpace(ShareRedisKeyEnum.DRIVER_WORK, DriverWorkBo.class, driverId.toString());

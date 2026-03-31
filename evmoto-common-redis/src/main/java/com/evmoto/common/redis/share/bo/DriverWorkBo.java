@@ -15,10 +15,14 @@ import java.io.Serializable;
 public class DriverWorkBo implements Serializable {
 
     /**
-     * 司机信息
+     * 司机id
      */
     private Integer driverId;
 
+    /**
+     * 乘客id
+     */
+    private Integer userId;
     /**
      * 当前服务的订单，为null就表示没有
      */
