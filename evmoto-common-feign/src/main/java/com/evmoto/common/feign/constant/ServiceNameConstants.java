@@ -23,4 +23,5 @@ public interface ServiceNameConstants {
 
     String MB_CLOUD_PUSHMESSAGE = "mb-cloud-pushMessage";
 
+    String MB_CLOUD_BUSINESSPROCESS = "mb-cloud-pushMessage";
 }

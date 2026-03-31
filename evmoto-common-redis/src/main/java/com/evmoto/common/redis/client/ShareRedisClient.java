@@ -29,7 +29,6 @@ public class ShareRedisClient {
         DriverWorkBo driverWork = getDriverWork(driverId);
         driverWork.setWaitPayConfirmOrderId(orderId);
         driverWork.setWaitPayConfirm(1);
-        //evmotoRedisClient.setNoNameSpace(ShareRedisKeyEnum.DRIVER_WORK, driverWork, DriverWorkBo.class, driverId.toString());
         addToRedis(driverId, driverWork);
     }
 
@@ -37,14 +36,13 @@ public class ShareRedisClient {
      * 删除司机等待确认支付的标志
      * @param driverId
      */
-    public void delDriverWaitPayConfirm(Integer driverId) {
+    public void clearDriverWaitPayConfirm(Integer driverId) {
         if (driverId == null) {
             return;
         }
         DriverWorkBo driverWork = getDriverWork(driverId);
         driverWork.setWaitPayConfirmOrderId(null);
         driverWork.setWaitPayConfirm(0);
-        //evmotoRedisClient.setNoNameSpace(ShareRedisKeyEnum.DRIVER_WORK, driverWork, DriverWorkBo.class, driverId.toString());
         addToRedis(driverId, driverWork);
     }
 
@@ -85,6 +83,22 @@ public class ShareRedisClient {
     public void clearDriverWorkOrderId(Integer driverId) {
         DriverWorkBo driverWork = getDriverWork(driverId);
         driverWork.setOrderId(null);
+        addToRedis(driverId, driverWork);
+    }
+
+    public void clearAllDriverWork(Integer driverId) {
+        DriverWorkBo driverWork = getDriverWork(driverId);
+        driverWork.setOrderId(null);
+        driverWork.setWaitPayConfirm(null);
+        driverWork.setWaitPayConfirmOrderId(null);
+        addToRedis(driverId, driverWork);
+    }
+
+    public void setAllDriverWork(Integer driverId, Long orderId) {
+        DriverWorkBo driverWork = getDriverWork(driverId);
+        driverWork.setOrderId(orderId);
+        driverWork.setWaitPayConfirm(1);
+        driverWork.setWaitPayConfirmOrderId(orderId);
         addToRedis(driverId, driverWork);
     }
 

@@ -103,6 +103,8 @@ public class OrderPrivateCarVo implements Serializable {
      * 公司id
      */
     private Integer companyId;
+
+
 }
 
 
