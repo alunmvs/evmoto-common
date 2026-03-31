@@ -32,4 +32,9 @@ public class OrderStageChangeDto implements Serializable {
      * 当前订单状态
      */
     private int currentState;
+
+    /**
+     * 如果订单状态是取消是，这个属性就是取消前的司机id
+     */
+    private Integer cancelDriverId;
 }

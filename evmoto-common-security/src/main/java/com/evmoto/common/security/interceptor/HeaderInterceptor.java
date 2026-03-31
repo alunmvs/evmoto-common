@@ -41,6 +41,7 @@ public class HeaderInterceptor implements HandlerInterceptor {
             SecurityContextHolder.setDeviceId(ServletUtils.getHeader(request, SecurityConstants.DEVICE_ID));
             SecurityContextHolder.setAuthorization(request.getHeader(SecurityConstants.AUTHORIZATION));
             String clientId = request.getHeader("clientId");//ServletUtils.getHeader(request, SecurityConstants.CLIENT_ID);
+            log.info("role:{}, clientId:{}", ServletUtils.getHeader(request, SecurityConstants.ROLE), clientId);
             if (StringUtils.isNotBlank(clientId)) {
                 if ("driver".equals(SecurityContextHolder.getRole())) {
                     SecurityContextHolder.setDriverId(Integer.valueOf(clientId));
