@@ -86,5 +86,5 @@ public interface OrderServerClient {
      * @return
      */
     @PutMapping("/order/feign/driver/cancel/{driverId}/{orderId}")
-    R<Boolean> driverCancelOrder(@PathVariable("driver") Integer driverId, @PathVariable("orderId") Long orderId);
+    R<Boolean> driverCancelOrder(@PathVariable("driverId") Integer driverId, @PathVariable("orderId") Long orderId);
 }
