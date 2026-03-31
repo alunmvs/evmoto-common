@@ -2,6 +2,7 @@ package com.evmoto.common.feign.order;
 
 import com.evmoto.common.core.domain.R;
 import com.evmoto.common.feign.constant.ServiceNameConstants;
+import com.evmoto.common.feign.order.dto.DriverConfirmFeeDto;
 import com.evmoto.common.feign.order.dto.OrderCollectionDto;
 import com.evmoto.common.feign.order.dto.OrderHallChangeDto;
 import com.evmoto.common.feign.order.vo.OrderPrivateCarVo;
@@ -87,4 +88,12 @@ public interface OrderServerClient {
      */
     @PutMapping("/order/feign/driver/cancel/{driverId}/{orderId}")
     R<Boolean> driverCancelOrder(@PathVariable("driverId") Integer driverId, @PathVariable("orderId") Long orderId);
+
+    /**
+     * 司机确认费用
+     * @param dto
+     * @return
+     */
+    @PostMapping("/order/feign/driver/confirmFee")
+    R<Boolean> driverConfirmFee(@RequestBody DriverConfirmFeeDto dto);
 }

@@ -38,4 +38,9 @@ public class OrderPaySuccessMqDto implements Serializable {
      * 订单类型
      */
     private Integer orderType;
+
+    /**
+     * 平台佣金
+     */
+    private Double serviceCharge;
 }
