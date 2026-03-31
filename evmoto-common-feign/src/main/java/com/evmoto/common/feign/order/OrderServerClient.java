@@ -71,4 +71,20 @@ public interface OrderServerClient {
      */
     @PutMapping("/order/feign/waitAccept/{orderId}")
     R<Boolean> orderStateToWaitAccept(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 乘客取消订单
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/order/feign/user/cancel/{userId}/{orderId}")
+    R<Boolean> userCancelOrder(@PathVariable("userId") Integer userId, @PathVariable("orderId") Long orderId);
+
+    /**
+     * 司机取消订单
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/order/feign/driver/cancel/{driverId}/{orderId}")
+    R<Boolean> driverCancelOrder(@PathVariable("driver") Integer driverId, @PathVariable("orderId") Long orderId);
 }
