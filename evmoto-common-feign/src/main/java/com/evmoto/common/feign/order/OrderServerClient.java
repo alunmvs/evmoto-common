@@ -96,4 +96,12 @@ public interface OrderServerClient {
      */
     @PostMapping("/order/feign/driver/confirmFee")
     R<Boolean> driverConfirmFee(@RequestBody DriverConfirmFeeDto dto);
+
+    /**
+     * 取消待支付（用户取消需支付违约金）
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/order/feign/cancelledPendingPayment/{orderId}")
+    R<Boolean> cancelledPendingPayment(@PathVariable("orderId") Long orderId);
 }
