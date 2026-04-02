@@ -104,4 +104,12 @@ public interface OrderServerClient {
      */
     @PutMapping("/order/feign/cancelledPendingPayment/{orderId}")
     R<Boolean> cancelledPendingPayment(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 司机走流程接口，暂时这样操作
+     * @return
+     */
+    @PutMapping("/order/feign/state/process/{orderId}/{state}")
+    R<Boolean> driverOrderProcess(@PathVariable("orderId") Long orderId, @PathVariable("state") Integer state);
+
 }
