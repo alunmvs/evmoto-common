@@ -64,7 +64,7 @@ public class OrderRedisClient {
      * @param orderId
      * @return
      */
-    private OrderBo getOrder(Long orderId) {
+    public OrderBo getOrder(Long orderId) {
         OrderBo order = evmotoRedisClient.getNoNameSpace(ShareRedisKeyEnum.ORDER, OrderBo.class, orderId.toString());
         return order;
     }

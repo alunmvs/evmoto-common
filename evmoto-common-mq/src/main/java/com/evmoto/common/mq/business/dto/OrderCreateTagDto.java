@@ -48,4 +48,14 @@ public class OrderCreateTagDto implements Serializable {
      * 起点纬度
      */
     private Double startLat;
+
+    /**
+     * 终点经度
+     */
+    private Double endLon;
+
+    /**
+     * 终点经度
+     */
+    private Double endLat;
 }

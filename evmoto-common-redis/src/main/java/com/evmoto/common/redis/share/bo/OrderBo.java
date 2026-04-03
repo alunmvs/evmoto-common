@@ -53,4 +53,9 @@ public class OrderBo implements Serializable {
      * 下车点坐标
      */
     private double endLat;
+
+    /**
+     * 行驶的距离，这个是会累加的 单位是米
+     */
+    private long tripDistance = 0;
 }

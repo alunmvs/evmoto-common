@@ -20,6 +20,11 @@ public class DriverOrderPositionDto implements Serializable {
     private Integer driverId;
 
     /**
+     * 乘客id
+     */
+    private Integer userId;
+
+    /**
      * 订单id
      */
     private Long orderId;
@@ -29,8 +34,23 @@ public class DriverOrderPositionDto implements Serializable {
      */
     private Integer orderType;
 
-
+    /**
+     * 当前坐标
+     */
     private Double lat;
 
+    /**
+     * 当前坐标
+     */
     private Double lon;
+
+    /**
+     * 上一次的坐标
+     */
+    private Double preLat;
+
+    /**
+     * 上一次的坐标
+     */
+    private Double preLon;
 }

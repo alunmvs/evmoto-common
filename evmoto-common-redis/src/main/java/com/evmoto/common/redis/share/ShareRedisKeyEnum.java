@@ -31,7 +31,7 @@ public enum ShareRedisKeyEnum implements CacheInterface {
 
     ORDER_STATE("share:orderState:{0}", Duration.ofDays(1), "订单的状态共享"),
 
-    ORDER("share:order:{0}", Duration.ofDays(1), "订单信息"),
+    ORDER("share:order:{0}", Duration.ofDays(5), "订单信息"),
     ;
 
     private String key;

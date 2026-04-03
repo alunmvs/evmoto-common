@@ -12,7 +12,7 @@ public interface MessageTopic {
     /**
      * 主题
      */
-    String MESSAGE_TOPIC = "push_message_driver_position";
+    String MESSAGE_TOPIC = "push_message";
 
     /**
      * 司机的订单位置
