@@ -33,4 +33,24 @@ public class OrderBo implements Serializable {
      * 订单状态
      */
     private Integer state;
+
+    /**
+     * 上车点坐标
+     */
+    private double startLon;
+
+    /**
+     * 上车点坐标
+     */
+    private double startLat;
+
+    /**
+     * 下车点坐标
+     */
+    private double endLon;
+
+    /**
+     * 下车点坐标
+     */
+    private double endLat;
 }

@@ -33,6 +33,14 @@ public class OrderRedisClient {
         addToRedis(orderId, order);
     }
 
+    /**
+     * 初始化一个订单进缓存
+     * @param order
+     */
+    public void initOrder(OrderBo order) {
+        addToRedis(order.getOrderId(), order);
+    }
+
     public Integer getOrderStateByOrderId(Long orderId) {
         OrderBo order = getOrder(orderId);
         if (order == null) {
