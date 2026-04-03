@@ -33,7 +33,7 @@ public class OrderRedisClient {
         addToRedis(orderId, order);
     }
 
-    private Integer getOrderStateByOrderId(Long orderId) {
+    public Integer getOrderStateByOrderId(Long orderId) {
         OrderBo order = getOrder(orderId);
         if (order == null) {
             return null;
@@ -41,7 +41,7 @@ public class OrderRedisClient {
         return order.getState();
     }
 
-    private void setStateByOrderId(Long orderId, Integer state) {
+    public void setStateByOrderId(Long orderId, Integer state) {
         OrderBo order = getOrder(orderId);
         if (order == null) {
             order = new OrderBo();
