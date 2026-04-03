@@ -30,6 +30,8 @@ public enum ShareRedisKeyEnum implements CacheInterface {
     DRIVER_WORK("share:work:{0}", Duration.ofDays(10), "司机各种状态"),
 
     ORDER_STATE("share:orderState:{0}", Duration.ofDays(1), "订单的状态共享"),
+
+    ORDER("share:order:{0}", Duration.ofDays(1), "订单信息"),
     ;
 
     private String key;

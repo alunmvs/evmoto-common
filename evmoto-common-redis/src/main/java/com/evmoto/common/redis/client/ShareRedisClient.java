@@ -80,12 +80,20 @@ public class ShareRedisClient {
         return driverWork.getOrderId();
     }
 
+    /**
+     * 清空司机工作中的订单
+     * @param driverId
+     */
     public void clearDriverWorkOrderId(Integer driverId) {
         DriverWorkBo driverWork = getDriverWork(driverId);
         driverWork.setOrderId(null);
         addToRedis(driverId, driverWork);
     }
 
+    /**
+     * 清空所有标志位
+     * @param driverId
+     */
     public void clearAllDriverWork(Integer driverId) {
         DriverWorkBo driverWork = getDriverWork(driverId);
         driverWork.setOrderId(null);
@@ -94,6 +102,11 @@ public class ShareRedisClient {
         addToRedis(driverId, driverWork);
     }
 
+    /**
+     * 设置工作中的订单id
+     * @param driverId
+     * @param orderId
+     */
     public void setAllDriverWork(Integer driverId, Long orderId) {
         DriverWorkBo driverWork = getDriverWork(driverId);
         driverWork.setOrderId(orderId);
@@ -102,6 +115,11 @@ public class ShareRedisClient {
         addToRedis(driverId, driverWork);
     }
 
+    /**
+     * 获取
+     * @param driverId
+     * @return
+     */
     private DriverWorkBo getDriverWork(Integer driverId) {
         DriverWorkBo driverWork = evmotoRedisClient.getNoNameSpace(ShareRedisKeyEnum.DRIVER_WORK, DriverWorkBo.class, driverId.toString());
         if (driverWork == null) {
