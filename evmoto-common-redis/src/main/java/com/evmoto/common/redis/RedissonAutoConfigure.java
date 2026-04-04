@@ -65,6 +65,12 @@ public class RedissonAutoConfigure {
         return new ShareRedisClient(evmotoRedisClient);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(OrderRedisClient.class)
+    public OrderRedisClient orderRedisClient(EvmotoRedisClient evmotoRedisClient) {
+        return new OrderRedisClient(evmotoRedisClient);
+    }
+
 
 
     /*@Bean
