@@ -286,17 +286,18 @@ public class GoogleMapUtil {
      * @param lng   Optional: location bias longitude
      * @return List of FindPlaceFromTextVo, empty list if not found
      */
-    public List<FindPlaceFromTextVo> searchPlaces(String query, int limit, Double lat, Double lng) throws Exception {
+    public List<FindPlaceFromTextVo> searchPlaces(String query, int limit, Double lat, Double lng, String language, int radius) throws Exception {
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey(key)
                 .build();
         try {
+            String lang = (language != null && !language.isEmpty()) ? language : "id";
             TextSearchRequest request = new TextSearchRequest(context)
                     .query(query)
-                    .language("en");
+                    .language(lang);
 
             if (lat != null && lng != null) {
-                request = request.location(new LatLng(lat, lng));
+                request = request.location(new LatLng(lat, lng)).radius(radius > 0 ? radius : 50000);
             }
 
             PlacesSearchResult[] results = request.await().results;

@@ -3,6 +3,7 @@ package com.evmoto.common.feign.order.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author yelingjun
@@ -19,4 +20,6 @@ public class DriverConfirmFeeDto implements Serializable {
     private Double additionalCharge;
 
     private String surchargeDescription;
+
+    private Date driverConfirmFeesAt;
 }
