@@ -60,6 +60,19 @@ public class ShareRedisClient {
     }
 
     /**
+     * 是否存在工作中的订单
+     * @param driverId
+     * @return
+     */
+    public boolean existDriverWorkOrder(Integer driverId) {
+        if (driverId == null) {
+            return false;
+        }
+        DriverWorkBo driverWork = getDriverWork(driverId);
+        return driverWork.getOrderId() == null ? false :true;
+    }
+
+    /**
      * 设置设置目前在服务的订单
      * @param driverId
      * @param orderId
