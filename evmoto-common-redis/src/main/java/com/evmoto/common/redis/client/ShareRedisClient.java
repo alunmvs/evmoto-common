@@ -33,6 +33,18 @@ public class ShareRedisClient {
     }
 
     /**
+     * 获取等待确认支付的订单id
+     * @param driverId
+     */
+    public Long getDriverWaitPayConfirm(Integer driverId) {
+        if (driverId == null) {
+            return null;
+        }
+        DriverWorkBo driverWork = getDriverWork(driverId);
+        return driverWork.getWaitPayConfirmOrderId();
+    }
+
+    /**
      * 删除司机等待确认支付的标志
      * @param driverId
      */

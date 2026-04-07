@@ -5,6 +5,7 @@ import com.evmoto.common.feign.constant.ServiceNameConstants;
 import com.evmoto.common.feign.order.dto.DriverConfirmFeeDto;
 import com.evmoto.common.feign.order.dto.OrderCollectionDto;
 import com.evmoto.common.feign.order.dto.OrderHallChangeDto;
+import com.evmoto.common.feign.order.dto.OrderQueryDto;
 import com.evmoto.common.feign.order.vo.OrderPrivateCarVo;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -111,5 +112,13 @@ public interface OrderServerClient {
      */
     @PutMapping("/order/feign/state/process/{orderId}/{state}")
     R<Boolean> driverOrderProcess(@PathVariable("orderId") Long orderId, @PathVariable("state") Integer state);
+
+    /**
+     * 根据状态数组查询订单
+     * @param dto
+     * @return
+     */
+    @PostMapping("/order/feign/order/query")
+    R<Long> queryOrder(@RequestBody OrderQueryDto dto);
 
 }
