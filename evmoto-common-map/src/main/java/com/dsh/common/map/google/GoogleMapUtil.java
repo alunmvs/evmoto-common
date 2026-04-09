@@ -7,6 +7,7 @@ import com.dsh.common.map.vo.GeocodeVo;
 import com.dsh.common.map.vo.ReverseGeocodeVo;
 import com.google.maps.*;
 import com.google.maps.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -22,7 +23,8 @@ import java.util.List;
 @Component
 public class GoogleMapUtil {
 
-    private final String key = "AIzaSyD6C7vVm_PbnBkauYioOYTmQca7EoCQP20";
+    @Value("${map.google.api-key}")
+    private String key;
 
     /**
      * Forward geocoding: address -> coordinates

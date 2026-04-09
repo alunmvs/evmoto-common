@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -21,10 +22,10 @@ import java.net.URL;
 @Component
 public class OSRMUtil {
 
-    // OSRM Server URL - Self-hosted OSRM on localhost
-    private static final String OSRM_SERVER_URL = "http://127.0.0.1:5000";
+    private static String OSRM_SERVER_URL;
 
-    public OSRMUtil() {
+    public OSRMUtil(@Value("${map.osrm.server-url}") String osrmServerUrl) {
+        OSRM_SERVER_URL = osrmServerUrl;
         log.info("[OSRM] - OSRMUtil initialized with server: {}", OSRM_SERVER_URL);
     }
 
