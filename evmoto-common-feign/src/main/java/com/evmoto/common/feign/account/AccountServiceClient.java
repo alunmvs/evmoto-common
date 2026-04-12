@@ -36,4 +36,12 @@ public interface AccountServiceClient {
      */
     @PutMapping("/account/feign/user/pay/confirm/{orderId}")
     R<Boolean> userConfirm(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 系统自动确认支付
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/account/feign/system/pay/confirm/{orderId}")
+    R<Boolean> systemConfirm(@PathVariable("orderId") Long orderId);
 }

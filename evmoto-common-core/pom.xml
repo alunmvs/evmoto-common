@@ -8,7 +8,7 @@
         <version>2026.03.10-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>2026.03.10-SNAPSHOT</version>
+    <version>2026.04.12-SNAPSHOT</version>
     <artifactId>evmoto-common-core</artifactId>
     <dependencies>
         <dependency>
