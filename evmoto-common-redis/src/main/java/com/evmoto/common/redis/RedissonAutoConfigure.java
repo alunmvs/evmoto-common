@@ -72,6 +72,13 @@ public class RedissonAutoConfigure {
     }
 
 
+    @Bean
+    @ConditionalOnMissingBean(OrderCancelDriverRedisClient.class)
+    public OrderCancelDriverRedisClient orderCancelDriverRedisClient(EvmotoRedisClient evmotoRedisClient) {
+        return new OrderCancelDriverRedisClient(evmotoRedisClient);
+    }
+
+
 
     /*@Bean
     @ConditionalOnMissingBean(RedissonStringClient.class)

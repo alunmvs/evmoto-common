@@ -141,4 +141,8 @@ public class EvmotoRedisClient {
     public boolean existNoNameSpace(CacheInterface keyEnum, String... params) {
         return exist(keyEnum, false, params);
     }
+
+    public RedissonClient getRedissonClient() {
+        return redissonClient;
+    }
 }

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>evmoto-common-redis</artifactId>
-    <version>2026.04.06-SNAPSHOT</version>
+    <version>2026.04.13-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

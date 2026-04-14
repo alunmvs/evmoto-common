@@ -34,6 +34,8 @@ public enum ShareRedisKeyEnum implements CacheInterface {
     ORDER("share:order:{0}", Duration.ofDays(5), "订单信息"),
 
     ORDER_TRACK("share:order_track:{0}", Duration.ofDays(3), "订单轨迹"),
+
+    DRIVER_CANCEL_ORDER("share:order_cancel:{0}", Duration.ofDays(1), "订单被司机取消的列表，redis的类型是Set，key是订单Id，set里面存的是司机id"),
     ;
 
     private String key;
