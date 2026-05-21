@@ -121,4 +121,18 @@ public interface OrderServerClient {
     @PostMapping("/order/feign/order/query")
     R<Long> queryOrder(@RequestBody OrderQueryDto dto);
 
+    /**
+     * 用户从弹窗选择"Cari driver lagi" → state 11 → 1 (atomic, hanya dari state 11)
+     */
+    @PutMapping("/order/feign/user/reassign/{orderId}")
+    R<Boolean> userChooseReassign(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 用户从弹窗选择"Batal" → state 11 → 10 (atomic, hanya dari state 11)
+     */
+    @PutMapping("/order/feign/user/cancel/reassigning/{userId}/{orderId}")
+    R<Boolean> userCancelFromReassigning(
+            @PathVariable("userId") Integer userId,
+            @PathVariable("orderId") Long orderId);
+
 }
