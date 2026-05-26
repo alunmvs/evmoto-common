@@ -325,6 +325,42 @@ public class GoogleMapUtil {
     }
 
     /**
+     * Nearby place search: find the most prominent place near a coordinate.
+     * Uses Places API Nearby Search (no text query required).
+     *
+     * @param lat          Latitude
+     * @param lng          Longitude
+     * @param radiusMeters Search radius in meters (recommended: 50-100)
+     * @return FindPlaceFromTextVo with POI name, or null if no place found
+     */
+    public FindPlaceFromTextVo searchNearbyPlace(double lat, double lng, int radiusMeters) throws Exception {
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey(key)
+                .build();
+        try {
+            PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, new LatLng(lat, lng))
+                    .radius(radiusMeters > 0 ? radiusMeters : 100)
+                    .language("id")
+                    .await();
+            PlacesSearchResult[] results = response.results;
+            if (results != null && results.length > 0) {
+                PlacesSearchResult r = results[0];
+                FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
+                vo.setName(r.name);
+                vo.setAddress(r.formattedAddress != null ? r.formattedAddress : r.vicinity);
+                if (r.geometry != null) {
+                    vo.setLat(r.geometry.location.lat);
+                    vo.setLng(r.geometry.location.lng);
+                }
+                return vo;
+            }
+            return null;
+        } finally {
+            context.shutdown();
+        }
+    }
+
+    /**
      * Directions: route plan between two locations
      *
      * @param origin      Origin (address, place ID, or lat/lng)
