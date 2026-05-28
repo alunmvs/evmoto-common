@@ -30,4 +30,10 @@ public class DriverConfirmFeeDto implements Serializable {
     private Double driverWait;
 
     private Double driverWaitMoney;
+
+    private Double orderMoney;
+
+    private Double payMoney;
+
+    private Double driverOrderMoney;
 }
