@@ -22,4 +22,12 @@ public class DriverConfirmFeeDto implements Serializable {
     private String surchargeDescription;
 
     private Date driverConfirmFeesAt;
+
+    private Double wait;
+
+    private Double waitMoney;
+
+    private Double driverWait;
+
+    private Double driverWaitMoney;
 }
