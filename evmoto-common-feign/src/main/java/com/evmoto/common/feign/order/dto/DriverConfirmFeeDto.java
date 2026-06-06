@@ -36,4 +36,31 @@ public class DriverConfirmFeeDto implements Serializable {
     private Double payMoney;
 
     private Double driverOrderMoney;
+
+    // User-side pricing breakdown (final values from confirmFees)
+    private Double startMileage;
+    private Double startMoney;
+    private Double mileageKilometers;
+    private Double mileageMoney;
+    private Double duration;
+    private Double durationMoney;
+    private Double fastigiumMoney;
+    private Double nightMoney;
+    private Double longDistance;
+    private Double longDistanceMoney;
+
+    // Driver-side pricing breakdown (final values from confirmFees)
+    private Double driverStartMileage;
+    private Double driverStartMoney;
+    private Double driverMileageKilometers;
+    private Double driverMileageMoney;
+    private Double driverDuration;
+    private Double driverDurationMoney;
+    private Double driverFastigiumMoney;
+    private Double driverNightMoney;
+    private Double driverLongDistance;
+    private Double driverLongDistanceMoney;
+
+    private Double serviceCharge;
+    private Double collectionFees;
 }
