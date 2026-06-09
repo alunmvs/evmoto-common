@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * OSRM (Open Source Routing Machine)
@@ -23,6 +25,13 @@ import java.net.URL;
 public class OSRMUtil {
 
     private static String OSRM_SERVER_URL;
+
+    // BUG-T4: singleton dengan connection pool — tidak buat koneksi TCP baru setiap call
+    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES))
+            .build();
 
     public OSRMUtil(@Value("${map.osrm.server-url}") String osrmServerUrl) {
         OSRM_SERVER_URL = osrmServerUrl;
@@ -63,78 +72,50 @@ public class OSRMUtil {
      * @return OSRMRouteResult object containing distance, duration, and geometry; or null if not found
      */
     public static OSRMRouteResult getRoute(Double startLat, Double startLng, Double endLat, Double endLng) throws Exception {
-        HttpURLConnection conn = null;
-        BufferedReader reader = null;
+        String urlString = String.format(
+            "%s/route/v1/driving/%s,%s;%s,%s?overview=full&geometries=geojson",
+            OSRM_SERVER_URL,
+            startLng, startLat,  // OSRM uses lng,lat order (NOT lat,lng!)
+            endLng, endLat
+        );
 
-        try {
-            String urlString = String.format(
-                "%s/route/v1/driving/%s,%s;%s,%s?overview=full&geometries=geojson",
-                OSRM_SERVER_URL,
-                startLng, startLat,  // OSRM uses lng,lat order (NOT lat,lng!)
-                endLng, endLat
-            );
+        log.debug("[OSRM] - Request URL: {}", urlString);
 
-            log.debug("[OSRM] - Request URL: {}", urlString);
+        Request request = new Request.Builder().url(urlString).build();
+        try (Response response = HTTP_CLIENT.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                log.error("[OSRM] - HTTP error code: {}", response.code());
+                return null;
+            }
 
-            URL url = new URL(urlString);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
+            String responseBody = response.body().string();
+            log.debug("[OSRM] - Response: {}", responseBody);
 
-            int responseCode = conn.getResponseCode();
+            JSONObject jsonResponse = JSON.parseObject(responseBody);
+            String code = jsonResponse.getString("code");
 
-            if (responseCode == 200) {
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-                StringBuilder response = new StringBuilder();
-                String line;
+            if ("Ok".equals(code)) {
+                JSONArray routes = jsonResponse.getJSONArray("routes");
+                if (routes != null && routes.size() > 0) {
+                    JSONObject route = routes.getJSONObject(0);
 
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
+                    OSRMRouteResult result = new OSRMRouteResult();
+                    result.setDistance(route.getDouble("distance"));
+                    result.setDuration(route.getDouble("duration"));
 
-                log.debug("[OSRM] - Response: {}", response.toString());
-
-                JSONObject jsonResponse = JSON.parseObject(response.toString());
-                String code = jsonResponse.getString("code");
-
-                if ("Ok".equals(code)) {
-                    JSONArray routes = jsonResponse.getJSONArray("routes");
-
-                    if (routes != null && routes.size() > 0) {
-                        JSONObject route = routes.getJSONObject(0);
-
-                        OSRMRouteResult result = new OSRMRouteResult();
-                        result.setDistance(route.getDouble("distance"));
-                        result.setDuration(route.getDouble("duration"));
-
-                        JSONObject geometry = route.getJSONObject("geometry");
-                        if (geometry != null) {
-                            result.setGeometry(geometry.toJSONString());
-                        }
-
-                        log.info("[OSRM] - Route calculated - distance: {}m, duration: {}s",
-                                 result.getDistance(), result.getDuration());
-
-                        return result;
+                    JSONObject geometry = route.getJSONObject("geometry");
+                    if (geometry != null) {
+                        result.setGeometry(geometry.toJSONString());
                     }
+
+                    log.info("[OSRM] - Route calculated - distance: {}m, duration: {}s",
+                             result.getDistance(), result.getDuration());
+                    return result;
                 }
-
-                log.error("[OSRM] - API returned non-Ok code: {}", code);
-                return null;
-
-            } else {
-                log.error("[OSRM] - HTTP error code: {}", responseCode);
-                return null;
             }
 
-        } finally {
-            try {
-                if (reader != null) reader.close();
-                if (conn != null) conn.disconnect();
-            } catch (Exception e) {
-                log.warn("[OSRM] - Error closing connection: {}", e.getMessage());
-            }
+            log.error("[OSRM] - API returned non-Ok code: {}", code);
+            return null;
         }
     }
 
@@ -171,23 +152,13 @@ public class OSRMUtil {
      * @return true if server is accessible
      */
     public static boolean checkServerHealth() throws Exception {
-        HttpURLConnection conn = null;
-
-        try {
-            URL url = new URL(OSRM_SERVER_URL + "/route/v1/driving/0,0;0,0");
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-
-            int responseCode = conn.getResponseCode();
-            boolean isHealthy = (responseCode == 200 || responseCode == 400);
+        Request request = new Request.Builder()
+                .url(OSRM_SERVER_URL + "/route/v1/driving/0,0;0,0")
+                .build();
+        try (Response response = HTTP_CLIENT.newCall(request).execute()) {
+            boolean isHealthy = (response.code() == 200 || response.code() == 400);
             log.info("[OSRM] - Server health check: {}", isHealthy ? "HEALTHY" : "DOWN");
-
             return isHealthy;
-
-        } finally {
-            if (conn != null) conn.disconnect();
         }
     }
 

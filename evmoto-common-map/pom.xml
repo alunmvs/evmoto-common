@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>evmoto-common-map</artifactId>
-    <version>2026.05.26-SNAPSHOT</version>
+    <version>2026.06.09-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -40,6 +40,12 @@
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>2.0.0</version>
+        </dependency>
+        <!-- BUG-T4: OkHttp untuk connection pooling ke OSRM -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.9</version>
         </dependency>
     </dependencies>
 
