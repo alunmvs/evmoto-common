@@ -72,6 +72,11 @@ public class OrderPriceSchemeVo implements Serializable {
     private Double orderMoney = 0D;//订单金额
 
     /**
+     * jarak rute asli (km), sebelum dikurangi startMileage
+     */
+    private Double rawMileage = 0D;
+
+    /**
      * 起点坐标
      */
     private String startLonLat;
