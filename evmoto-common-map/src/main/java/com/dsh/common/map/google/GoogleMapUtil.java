@@ -434,18 +434,20 @@ public class GoogleMapUtil {
     }
 
     /**
-     * Nearby place search filtered by route name: Places Nearby Search result[0] tidak
-     * selalu yang terdekat (kadang listing nyasar dari lokasi lain). Untuk mengurangi
-     * false-positive, hanya kembalikan POI yang alamatnya menyebut nama jalan (routeName)
-     * dari hasil reverse geocode.
+     * Nearby place search filtered by route name + distance: Places Nearby Search result[0]
+     * tidak selalu yang terdekat (kadang listing nyasar dari lokasi lain). Untuk mengurangi
+     * false-positive, hanya kembalikan POI yang:
+     * 1. alamatnya menyebut nama jalan (routeName) dari hasil reverse geocode, DAN
+     * 2. koordinatnya berada dalam maxDistanceMeters dari lat,lng input (Haversine)
      *
      * @param lat       Latitude
      * @param lng       Longitude
-     * @param radiusMeters Search radius in meters (recommended: 50-100)
+     * @param radiusMeters Search radius in meters untuk Places Nearby Search (recommended: 50-100)
      * @param routeName Nama jalan dari reverse geocode (address component tipe ROUTE)
-     * @return FindPlaceFromTextVo POI pertama yang alamatnya cocok dengan routeName, atau null jika tidak ada
+     * @param maxDistanceMeters Jarak maksimum POI dari lat,lng input (recommended: 25)
+     * @return FindPlaceFromTextVo POI pertama yang cocok, atau null jika tidak ada
      */
-    public FindPlaceFromTextVo findNearbyPlaceOnRoute(double lat, double lng, int radiusMeters, String routeName) throws Exception {
+    public FindPlaceFromTextVo findNearbyPlaceOnRoute(double lat, double lng, int radiusMeters, String routeName, double maxDistanceMeters) throws Exception {
         if (routeName == null || routeName.trim().isEmpty()) {
             return null;
         }
@@ -472,13 +474,18 @@ public class GoogleMapUtil {
                     if (address == null || !normalizeForMatch(address).contains(normalizedRoute)) {
                         continue;
                     }
+                    if (r.geometry == null) {
+                        continue;
+                    }
+                    double distance = haversineMeters(lat, lng, r.geometry.location.lat, r.geometry.location.lng);
+                    if (distance > maxDistanceMeters) {
+                        continue;
+                    }
                     FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
                     vo.setName(r.name);
                     vo.setAddress(address);
-                    if (r.geometry != null) {
-                        vo.setLat(r.geometry.location.lat);
-                        vo.setLng(r.geometry.location.lng);
-                    }
+                    vo.setLat(r.geometry.location.lat);
+                    vo.setLng(r.geometry.location.lng);
                     return vo;
                 }
             }
@@ -500,6 +507,20 @@ public class GoogleMapUtil {
             normalized = normalized.substring("jl".length());
         }
         return normalized;
+    }
+
+    /**
+     * Jarak antara dua koordinat dalam meter (Haversine formula).
+     */
+    private double haversineMeters(double lat1, double lng1, double lat2, double lng2) {
+        final double earthRadiusMeters = 6371000;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusMeters * c;
     }
 
     /**
