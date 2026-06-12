@@ -66,10 +66,29 @@ public class GoogleMapUtil {
                 .build();
         try {
             GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(lat, lng))
-                    .language("en")
+                    .language("id")
                     .await();
             if (results.length > 0) {
-                AddressComponent[] components = results[0].addressComponents;
+                // results[0] sering bertipe plus_code yang komponennya hanya kota/provinsi/negara;
+                // pakai hasil non-plus_code pertama (street_address/premise/route/dst) agar lebih spesifik
+                GeocodingResult result = results[0];
+                for (GeocodingResult r : results) {
+                    boolean plusCode = false;
+                    if (r.types != null) {
+                        for (AddressType type : r.types) {
+                            if (type == AddressType.PLUS_CODE) {
+                                plusCode = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!plusCode) {
+                        result = r;
+                        break;
+                    }
+                }
+
+                AddressComponent[] components = result.addressComponents;
                 AddressComponentsVo[] componentVos = new AddressComponentsVo[components.length];
                 for (int i = 0; i < components.length; i++) {
                     AddressComponentsVo c = new AddressComponentsVo();
@@ -78,13 +97,13 @@ public class GoogleMapUtil {
                     componentVos[i] = c;
                 }
                 ReverseGeocodeVo vo = new ReverseGeocodeVo();
-                vo.setAddress(results[0].formattedAddress);
+                vo.setAddress(result.formattedAddress);
                 vo.setAddressComponentsVos(componentVos);
 
                 String tier1 = null; // point_of_interest, establishment, premise, tourist_attraction
                 String tier2 = null; // airport, station, park, natural_feature, shopping_mall, museum, campground
                 String tier3 = null; // route
-                String tier4 = null; // neighborhood, sublocality
+                String tier4 = null; // neighborhood, sublocality, kelurahan/kecamatan (admin level 4/3)
                 String tier5 = null; // locality
                 String tier6 = null; // administrative_area_level_2, level_1
 
@@ -117,7 +136,10 @@ public class GoogleMapUtil {
                         if (tier4 == null && (
                                 type == AddressComponentType.NEIGHBORHOOD
                                 || type == AddressComponentType.SUBLOCALITY_LEVEL_1
-                                || type == AddressComponentType.SUBLOCALITY)) {
+                                || type == AddressComponentType.SUBLOCALITY
+                                // di Indonesia kelurahan/kecamatan dikirim sebagai admin level 4/3, bukan sublocality
+                                || type == AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_4
+                                || type == AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_3)) {
                             tier4 = component.longName;
                         }
                         if (tier5 == null && type == AddressComponentType.LOCALITY) {
@@ -131,6 +153,25 @@ public class GoogleMapUtil {
                     }
                 }
 
+                // Reverse geocode hampir tidak pernah berisi komponen POI/establishment;
+                // ambil nama tempat sebenarnya dari Places Nearby Search
+                if (tier1 == null) {
+                    try {
+                        PlacesSearchResponse nearby = PlacesApi.nearbySearchQuery(context, new LatLng(lat, lng))
+                                .radius(50)
+                                .language("id")
+                                .await();
+                        for (PlacesSearchResult r : nearby.results) {
+                            if (isActualPlace(r)) {
+                                tier1 = r.name;
+                                break;
+                            }
+                        }
+                    } catch (Exception ignored) {
+                        // nearby search opsional; tetap pakai hasil reverse geocode jika gagal
+                    }
+                }
+
                 String name = tier1 != null ? tier1
                         : tier2 != null ? tier2
                         : tier3 != null ? tier3
@@ -138,10 +179,10 @@ public class GoogleMapUtil {
                         : tier5 != null ? tier5
                         : tier6;
 
-                if (name == null && results[0].plusCode != null) {
-                    name = results[0].plusCode.compoundCode != null
-                            ? results[0].plusCode.compoundCode
-                            : results[0].plusCode.globalCode;
+                if (name == null && result.plusCode != null) {
+                    name = result.plusCode.compoundCode != null
+                            ? result.plusCode.compoundCode
+                            : result.plusCode.globalCode;
                 }
 
                 vo.setName(name);
@@ -151,6 +192,27 @@ public class GoogleMapUtil {
         } finally {
             context.shutdown();
         }
+    }
+
+    /**
+     * Nearby Search sering mengembalikan wilayah administratif (kota/kecamatan) atau jalan
+     * sebagai hasil pertama; hanya anggap hasil sebagai tempat nyata (POI) jika bukan wilayah/jalan.
+     */
+    private boolean isActualPlace(PlacesSearchResult r) {
+        if (r.types == null || r.name == null) {
+            return false;
+        }
+        for (String type : r.types) {
+            if ("political".equals(type)
+                    || "route".equals(type)
+                    || "locality".equals(type)
+                    || "sublocality".equals(type)
+                    || "neighborhood".equals(type)
+                    || "postal_code".equals(type)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
