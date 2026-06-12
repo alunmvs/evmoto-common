@@ -94,6 +94,13 @@ public class GoogleMapUtil {
                     AddressComponentsVo c = new AddressComponentsVo();
                     c.setLongName(components[i].longName);
                     c.setShortName(components[i].shortName);
+                    if (components[i].types != null) {
+                        String[] types = new String[components[i].types.length];
+                        for (int j = 0; j < types.length; j++) {
+                            types[j] = components[i].types[j].name();
+                        }
+                        c.setTypes(types);
+                    }
                     componentVos[i] = c;
                 }
                 ReverseGeocodeVo vo = new ReverseGeocodeVo();
@@ -405,18 +412,63 @@ public class GoogleMapUtil {
                     .language("id")
                     .await();
             PlacesSearchResult[] results = response.results;
-            if (results != null && results.length > 0) {
-                PlacesSearchResult r = results[0];
-                FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
-                vo.setName(r.name);
-                vo.setAddress(r.formattedAddress != null ? r.formattedAddress : r.vicinity);
-                if (r.geometry != null) {
-                    vo.setLat(r.geometry.location.lat);
-                    vo.setLng(r.geometry.location.lng);
+            if (results != null) {
+                for (PlacesSearchResult r : results) {
+                    if (!isActualPlace(r)) {
+                        continue;
+                    }
+                    FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
+                    vo.setName(r.name);
+                    vo.setAddress(r.formattedAddress != null ? r.formattedAddress : r.vicinity);
+                    if (r.geometry != null) {
+                        vo.setLat(r.geometry.location.lat);
+                        vo.setLng(r.geometry.location.lng);
+                    }
+                    return vo;
                 }
-                return vo;
             }
             return null;
+        } finally {
+            context.shutdown();
+        }
+    }
+
+    /**
+     * Nearby place search (debug): returns all raw candidates within radius, unfiltered,
+     * including their place types. Use this to diagnose why searchNearbyPlace() picked
+     * (or skipped) a particular result.
+     *
+     * @param lat          Latitude
+     * @param lng          Longitude
+     * @param radiusMeters Search radius in meters (recommended: 50-100)
+     * @return List of FindPlaceFromTextVo (with types), empty list if no place found
+     */
+    public List<FindPlaceFromTextVo> searchNearbyPlaceCandidates(double lat, double lng, int radiusMeters) throws Exception {
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey(key)
+                .build();
+        try {
+            PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, new LatLng(lat, lng))
+                    .radius(radiusMeters > 0 ? radiusMeters : 100)
+                    .language("id")
+                    .await();
+            List<FindPlaceFromTextVo> list = new ArrayList<>();
+            if (response.results != null) {
+                for (PlacesSearchResult r : response.results) {
+                    FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
+                    vo.setName(r.name);
+                    vo.setAddress(r.formattedAddress != null ? r.formattedAddress : r.vicinity);
+                    if (r.geometry != null) {
+                        vo.setLat(r.geometry.location.lat);
+                        vo.setLng(r.geometry.location.lng);
+                    }
+                    if (r.types != null) {
+                        vo.setTypes(r.types.clone());
+                    }
+                    list.add(vo);
+                }
+            }
+            return list;
         } finally {
             context.shutdown();
         }

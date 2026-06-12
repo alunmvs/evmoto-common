@@ -3,6 +3,7 @@ package com.dsh.common.map.vo;
 public class AddressComponentsVo {
     private String longName;
     private String shortName;
+    private String[] types;
 
     public String getLongName() {
         return longName;
@@ -18,5 +19,13 @@ public class AddressComponentsVo {
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    public String[] getTypes() {
+        return types;
+    }
+
+    public void setTypes(String[] types) {
+        this.types = types;
     }
 }

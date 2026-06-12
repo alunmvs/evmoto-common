@@ -5,6 +5,7 @@ public class FindPlaceFromTextVo {
     private String address;
     private Double lat;
     private Double lng;
+    private String[] types;
 
     public String getName() {
         return name;
@@ -36,5 +37,13 @@ public class FindPlaceFromTextVo {
 
     public void setLng(Double lng) {
         this.lng = lng;
+    }
+
+    public String[] getTypes() {
+        return types;
+    }
+
+    public void setTypes(String[] types) {
+        this.types = types;
     }
 }
