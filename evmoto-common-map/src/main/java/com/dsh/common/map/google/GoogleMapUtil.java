@@ -434,6 +434,75 @@ public class GoogleMapUtil {
     }
 
     /**
+     * Nearby place search filtered by route name: Places Nearby Search result[0] tidak
+     * selalu yang terdekat (kadang listing nyasar dari lokasi lain). Untuk mengurangi
+     * false-positive, hanya kembalikan POI yang alamatnya menyebut nama jalan (routeName)
+     * dari hasil reverse geocode.
+     *
+     * @param lat       Latitude
+     * @param lng       Longitude
+     * @param radiusMeters Search radius in meters (recommended: 50-100)
+     * @param routeName Nama jalan dari reverse geocode (address component tipe ROUTE)
+     * @return FindPlaceFromTextVo POI pertama yang alamatnya cocok dengan routeName, atau null jika tidak ada
+     */
+    public FindPlaceFromTextVo findNearbyPlaceOnRoute(double lat, double lng, int radiusMeters, String routeName) throws Exception {
+        if (routeName == null || routeName.trim().isEmpty()) {
+            return null;
+        }
+        String normalizedRoute = normalizeForMatch(routeName);
+        if (normalizedRoute.length() < 3) {
+            return null;
+        }
+
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey(key)
+                .build();
+        try {
+            PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, new LatLng(lat, lng))
+                    .radius(radiusMeters > 0 ? radiusMeters : 100)
+                    .language("id")
+                    .await();
+            PlacesSearchResult[] results = response.results;
+            if (results != null) {
+                for (PlacesSearchResult r : results) {
+                    if (!isActualPlace(r)) {
+                        continue;
+                    }
+                    String address = r.formattedAddress != null ? r.formattedAddress : r.vicinity;
+                    if (address == null || !normalizeForMatch(address).contains(normalizedRoute)) {
+                        continue;
+                    }
+                    FindPlaceFromTextVo vo = new FindPlaceFromTextVo();
+                    vo.setName(r.name);
+                    vo.setAddress(address);
+                    if (r.geometry != null) {
+                        vo.setLat(r.geometry.location.lat);
+                        vo.setLng(r.geometry.location.lng);
+                    }
+                    return vo;
+                }
+            }
+            return null;
+        } finally {
+            context.shutdown();
+        }
+    }
+
+    /**
+     * Normalisasi nama jalan/alamat untuk pencocokan: lowercase, hapus karakter non-alfanumerik,
+     * dan hapus prefix "jalan"/"jl" supaya "Jalan TB Simatupang" cocok dengan "Jl. T. B. Simatupang No. 19".
+     */
+    private String normalizeForMatch(String text) {
+        String normalized = text.toLowerCase().replaceAll("[^a-z0-9]", "");
+        if (normalized.startsWith("jalan")) {
+            normalized = normalized.substring("jalan".length());
+        } else if (normalized.startsWith("jl")) {
+            normalized = normalized.substring("jl".length());
+        }
+        return normalized;
+    }
+
+    /**
      * Nearby place search (debug): returns all raw candidates within radius, unfiltered,
      * including their place types. Use this to diagnose why searchNearbyPlace() picked
      * (or skipped) a particular result.
